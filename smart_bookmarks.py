@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def config_logger():
-  logger.setLevel(logging.DEBUG)
+  logger.setLevel(logging.INFO)
   handler = logging.handlers.RotatingFileHandler(
     Path(os.getenv("alfred_workflow_cache")).joinpath("smart_bookmarks.log"))
   handler.setLevel(logging.DEBUG)
@@ -47,6 +47,17 @@ class BookmarkRepo:
 
   def update_store(self):
     need_save_store = False
+
+    # rm old store for files not in file_list
+    files_to_rm = []
+    for k in self.store:
+      if k not in self.file_list:
+        files_to_rm.append(k)
+        need_save_store = True
+        logger.info("%s not in file_list", k)
+
+    for k in files_to_rm:
+      self.store.pop(k)
 
     for org_file in self.file_list:
       need_reload = False
@@ -205,13 +216,12 @@ def filter_bookmark(line):
 
 def main():
   config_logger()
-  logger.debug("start")
 
   query = ""
   if len(sys.argv) > 1:
     query = sys.argv[1:]
 
-  logger.debug("query:%s", query)
+  logger.info("query:%s", query)
 
   file_list = os.getenv("org_files")
 
