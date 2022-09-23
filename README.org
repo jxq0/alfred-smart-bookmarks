@@ -23,3 +23,6 @@ An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy 
 *** Configure workflow
 1. Enter your org-mode bookmark file paths.
 2. Choose whether to use bookmarks from Google Chrome or Microsft Edge.
+
+** Thanks
+The bookmark icon was made by Freepik from [[http://www.flaticon.com][flaticon]].
