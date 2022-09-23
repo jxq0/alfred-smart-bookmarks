@@ -2,10 +2,20 @@
 * alfred-smart-bookmarks
 An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy to search for web bookmarks stored in org-mode files.
 
+** Features
+1. Read bookmarks from org-mode or markdown files.
+2. Read bookmarks from Google Chrome or Microsoft Edge.
+3. Search in alfred with Chinese pinyin.
+4. Full search, not just by word.
+
+** Demo
 [[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot.png]]
 
-** Feature
-1. read org files.
-2. search by pinyin.
-3. full search.
-4. orderless.
+** Usage
+*** Installation
+1. Download from [[https://github.com/jxq0/alfred-smart-bookmarks/releases/latest/][latest release]].
+2. Double-click to import into Alfred.
+
+*** Configure workflow
+1. Enter your org-mode bookmark file paths.
+2. Choose whether to use bookmarks from Google Chrome or Microsft Edge.
