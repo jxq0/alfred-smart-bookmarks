@@ -1,0 +1,16 @@
+#+options: toc:nil
+* Docs
+1. [[https://www.orgroam.com/manual.html][Org-roam User Manual]]
+2. [[https://github.com/bazelbuild/rules_scala/tree/master/docs][bazel rules_scala]]
+
+* Emacs
+[[https://emacsredux.com/][Emacs Redux]]
+[[https://batsov.com/][(think)]]
+[[https://protesilaos.com/][Protesilaos Stavrou]]
+[[https://irreal.org/blog/][Irreal]]
+
+* Scala
+** type class
+1. [[https://degoes.net/articles/when-to-typeclass][When to typeclass]]
+2. [[https://docs.scala-lang.org/scala3/book/ca-type-classes.html][Implementing Type Classes]]
+3. [[https://caiorss.github.io/Functional-Programming/haskell/polymorphism_and_typeclasses.html][Polymorphism and Typeclasses]]

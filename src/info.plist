@@ -273,6 +273,8 @@
 			<string>use_edge</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>1.0.0</string>
 	<key>webaddress</key>

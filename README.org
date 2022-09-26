@@ -24,5 +24,11 @@ An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy 
 1. Enter your org-mode bookmark file paths.
 2. Choose whether to use bookmarks from Google Chrome or Microsft Edge.
 
+** Why manage bookmarks with plain-text files?
+- All bookmarks in one place. No conflict between different browsers.
+- Easy to edit. If you use browser to manage bookmarks, it is not so convenient to change bookmarks hierarchy, or to rearrange them. You have to do a lot of mouse clicking.
+- Plain text files is friendly for version control. You can see every change between different versions.
+- Plain text files is easy to share with others.
+
 ** Thanks
 The bookmark icon was made by Freepik from [[http://www.flaticon.com][flaticon]].
