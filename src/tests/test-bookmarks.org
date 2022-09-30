@@ -18,3 +18,9 @@
 1. [[https://degoes.net/articles/when-to-typeclass][When to typeclass]]
 2. [[https://docs.scala-lang.org/scala3/book/ca-type-classes.html][Implementing Type Classes]]
 3. [[https://caiorss.github.io/Functional-Programming/haskell/polymorphism_and_typeclasses.html][Polymorphism and Typeclasses]]
+
+* 中文
+1. [[https://www.bilibili.com/][哔哩哔哩]]
+2. [[https://www.iqiyi.com/][爱奇艺]]
+3. [[https://www.ximalaya.com/][喜马拉雅FM]]
+4. [[https://weibo.com/][微博]]
