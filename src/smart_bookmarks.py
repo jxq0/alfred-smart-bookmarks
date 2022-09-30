@@ -1,25 +1,28 @@
-#!/usr/bin/python3
-import sys
-import os
-from orgparse import load, loads
-import re
-from collections import defaultdict
+#!/usr/bin/env python3
+import fcntl
+import hashlib
 import json
 import logging
 import logging.handlers
-import hashlib
-from pathlib import Path, PurePath
-import pinyin
+import os
+import re
 import subprocess
-from timeit import default_timer as timer
+import sys
 import time
-import fcntl
+from collections import defaultdict
+from pathlib import Path
+from timeit import default_timer as timer
 
-logger = logging.getLogger(__name__)
+import orgparse
+import pinyin
+import mistletoe
+from mistletoe import Document
+
+logger = logging.getLogger("smart_bookmarks")
 
 
 def config_logger():
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     handler = logging.handlers.RotatingFileHandler(
         Path(os.getenv("alfred_workflow_cache")).joinpath("smart_bookmarks.log")
     )
@@ -33,34 +36,33 @@ def config_logger():
 
 class BookmarkRepo:
     def __init__(self, file_list_str, store_dir):
-        self.file_list = file_list_str.split()
+        self.file_list = list(
+            map(lambda f: str(Path(f).expanduser()), file_list_str.split())
+        )
+
         self.store = {}
-        self.browser_store_path = Path(
-            os.getenv("alfred_workflow_cache")
-        ).joinpath("browser_bookmarks.json")
+        self.store_dir = Path(store_dir)
+        self.store_file = self.store_dir.joinpath("bookmarks.json")
+
+        self.browser_store_path = self.store_dir.joinpath(
+            "browser_bookmarks.json"
+        )
         self.browser_store = {}
-        self.browser_store_lock = (
-            Path(os.getenv("alfred_workflow_cache"))
-            .joinpath("browser_bookmarks.lock")
-            .open("w")
+        self.browser_store_lock = self.store_dir.joinpath(
+            "browser_bookmarks.lock"
         )
 
         self.md5sum = {}
         for org_file in self.file_list:
-            self.md5sum[org_file] = hashlib.md5(
-                open(org_file, "rb").read()
-            ).hexdigest()
-
-        self.store_dir = Path(store_dir)
-        self.store_file = self.store_dir.joinpath("bookmarks.json")
+            with open(org_file, "rb") as fd:
+                self.md5sum[org_file] = hashlib.md5(fd.read()).hexdigest()
 
         if not self.store_dir.exists():
             self.store_dir.mkdir(parents=True, exist_ok=True)
 
         if self.store_file.exists():
-            self.store = json.load(
-                self.store_file.open("r"), object_hook=bookmark_decode
-            )
+            with self.store_file.open("r") as fd:
+                self.store = json.load(fd, object_hook=bookmark_decode)
 
     def update_store(self):
         need_save_store = False
@@ -89,17 +91,56 @@ class BookmarkRepo:
             if need_reload:
                 need_save_store = True
                 self.store[org_file] = {
-                    "data": self.read_org_file(org_file),
+                    "data": self.read_file(org_file),
                     "md5sum": self.md5sum[org_file],
                 }
             else:
                 logger.info("file %s same, using cache", org_file)
 
-        logger.debug("store:%s", self.store)
         if need_save_store:
-            json.dump(
-                self.store, self.store_file.open("w"), cls=BookmarkEncoder
+            with self.store_file.open("w") as fd:
+                json.dump(self.store, fd, cls=BookmarkEncoder)
+
+    def walk_markdown(self, token, bookmarks, headings):
+        logger.debug("i'm %s, headings:%s", str(token), headings)
+
+        if type(token) == mistletoe.block_token.Heading:
+            new_headings = headings
+            heading_title = token.children[0].content
+
+            if headings:
+                new_headings = headings[: (token.level)] + [heading_title]
+            else:
+                new_headings = [heading_title]
+
+            headings[:] = new_headings
+            logger.debug(
+                "heading_title:%s, new_headings:%s", heading_title, new_headings
             )
+            return
+
+        if type(token) == mistletoe.span_token.Link:
+            if token.children:
+                b = Bookmark(token.children[0].content, token.target)
+                heading_path = str(Path(*(headings)))
+                bookmarks[heading_path].append(b)
+
+        if hasattr(token, "children"):
+            for node in token.children:
+                logger.debug("me:%s, child %s", str(token), str(node))
+                self.walk_markdown(node, bookmarks, headings)
+        else:
+            logger.debug("no children")
+
+    def read_markdown_file(self, file_path):
+        logger.debug("markdown")
+        bookmarks = defaultdict(list)
+
+        with open(file_path, "r") as fd:
+            doc = Document(fd)
+            self.walk_markdown(doc, bookmarks, ["/"])
+
+        return bookmarks
 
     def walk_node(self, node, bookmarks, headings):
         current_heading = ""
@@ -120,10 +161,21 @@ class BookmarkRepo:
     def read_org_file(self, file_path):
         bookmarks = defaultdict(list)
 
-        root = load(file_path)
+        root = orgparse.load(file_path)
         self.walk_node(root, bookmarks, [])
 
         return bookmarks
+
+    def read_file(self, file_path):
+        suffix = Path(file_path).suffix
+        logger.info("suffix %s", suffix)
+
+        if suffix == ".org":
+            return self.read_org_file(file_path)
+        elif suffix == ".md":
+            return self.read_markdown_file(file_path)
+        else:
+            return {}
 
     def filter_bookmark(self, line):
         bookmarks = []
@@ -145,17 +197,21 @@ class BookmarkRepo:
         if query in b.bookmark.url or query in b.bookmark.name.lower():
             return True
 
+        if query in pinyin.get_initial(b.bookmark.name, delimiter=""):
+            return True
+
         if query in pinyin.get(b.bookmark.name, format="strip"):
             return True
 
         return False
 
     def load_browser_bookmarks(self):
-        fcntl.flock(self.browser_store_lock, fcntl.LOCK_EX)
-        self.browser_store = json.load(
-            self.browser_store_path.open("r"), object_hook=bookmark_decode
-        )
-        fcntl.flock(self.browser_store_lock, fcntl.LOCK_UN)
+        with self.browser_store_lock.open("w") as lock_fd:
+            fcntl.flock(lock_fd, fcntl.LOCK_EX)
+            self.browser_store = json.load(
+                self.browser_store_path.open("r"), object_hook=bookmark_decode
+            )
+            fcntl.flock(lock_fd, fcntl.LOCK_UN)
 
         return
 
@@ -193,10 +249,10 @@ class BookmarkRepo:
                 if matched:
                     result_list.append(pathed_bookmark)
 
-        for i in result_list:
-            logger.debug(
-                "heading_path:%s, bookmark:%s", i.heading_path, i.bookmark
-            )
+        # for i in result_list:
+        #     logger.debug(
+        #         "heading_path:%s, bookmark:%s", i.heading_path, i.bookmark
+        #     )
 
         self.to_alfred(result_list)
 
