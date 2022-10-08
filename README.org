@@ -15,6 +15,8 @@ An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy 
 ** Demo
 [[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot.png]]
 
+[[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot1.gif]]
+
 ** Usage
 *** Requirements
 1. python3
@@ -25,7 +27,7 @@ An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy 
 2. Double-click to import into Alfred.
 
 *** Configure workflow
-1. Enter your org-mode bookmark file paths.
+1. Enter your org-mode and markdown bookmark file paths.
 2. Choose whether to use bookmarks from Google Chrome or Microsft Edge.
 
 ** Why manage bookmarks with plain-text files?

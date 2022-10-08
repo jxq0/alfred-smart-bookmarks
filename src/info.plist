@@ -228,7 +228,7 @@
 			<key>description</key>
 			<string>One file per line.</string>
 			<key>label</key>
-			<string>Org-mode Files</string>
+			<string>Bookmark Files</string>
 			<key>type</key>
 			<string>textarea</string>
 			<key>variable</key>
@@ -242,12 +242,12 @@
 				<key>required</key>
 				<false/>
 				<key>text</key>
-				<string>Use Google Chrome.</string>
+				<string></string>
 			</dict>
 			<key>description</key>
 			<string></string>
 			<key>label</key>
-			<string></string>
+			<string>Use bookmarks from Google Chrome</string>
 			<key>type</key>
 			<string>checkbox</string>
 			<key>variable</key>
@@ -261,20 +261,18 @@
 				<key>required</key>
 				<false/>
 				<key>text</key>
-				<string>Use Microsoft Edge.</string>
+				<string></string>
 			</dict>
 			<key>description</key>
 			<string></string>
 			<key>label</key>
-			<string></string>
+			<string>Use bookmarks from Microsoft Edge</string>
 			<key>type</key>
 			<string>checkbox</string>
 			<key>variable</key>
 			<string>use_edge</string>
 		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>1.0.0</string>
 	<key>webaddress</key>
