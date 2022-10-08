@@ -12,7 +12,7 @@ An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy 
 3. Search in alfred with Chinese pinyin.
 4. Full search, not just by word.
 
-** Demo
+** Screenshots
 [[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot.png]]
 
 [[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot1.gif]]
