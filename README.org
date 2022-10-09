@@ -13,9 +13,12 @@ An [[https://www.alfredapp.com/workflows/][Alfred workflow]] that makes it easy 
 4. Full search, not just by word.
 
 ** Screenshots
-[[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot.png]]
+[[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/images/screenshot.png]]
 
-[[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/screenshot1.gif]]
+[[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/images/screenshot1.gif]]
+
+Search with pinyin:
+[[https://raw.githubusercontent.com/jxq0/alfred-smart-bookmarks/main/images/screenshot-zh.png]]
 
 ** Usage
 *** Requirements
